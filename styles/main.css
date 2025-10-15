@@ -6,14 +6,28 @@
   --text: #e2e8f0;
   --accent: #38bdf8;
   --danger: #ef4444;
+  --success: #34d399;
   --dim-light: #cdd16a;
   --dim-dark: #aaa23a;
-  /* JS-adjusted scale for metadata when viewport height is small */
   --meta-scale: 1;
+  /* NEW: Additional semantic color variables */
+  --surface: #0b1220;
+  --surface-border: #334155;
+  --surface-hover: #1f2937;
+  --text-muted: #9ca3af;
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.4);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* IMPROVED: Better box-sizing reset */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html, body {
   height: 100%;
+  /* NEW: Prevent horizontal scroll */
+  overflow-x: hidden;
 }
 
 body {
@@ -23,23 +37,18 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   display: grid;
   place-items: center;
+  /* NEW: Smooth scrolling for mobile */
+  -webkit-overflow-scrolling: touch;
 }
 
 .container {
   width: min(96vw, 1600px);
   padding: 20px;
-  box-sizing: border-box;
   display: grid;
   gap: 16px;
 }
 
-.title {
-  margin: 0 0 4px 0;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-
+/* IMPROVED: More consistent title hierarchy */
 .page-title {
   position: fixed;
   top: 0;
@@ -50,54 +59,63 @@ body {
   font-weight: 800;
   color: var(--text);
   margin: 0;
+  padding: clamp(8px, 2vw, 16px) 0;
   pointer-events: none;
   z-index: 10;
   font-family: 'Georgia', serif;
+  /* NEW: Subtle background for better text readability */
+  background: linear-gradient(to bottom, var(--bg) 60%, transparent);
 }
 
 .board-wrapper {
   display: grid;
   place-items: center;
-  gap: 8px;
+  gap: 12px; /* Increased from 8px for better spacing */
 }
 
 .board-shell {
   width: clamp(360px, 44vw, 720px);
-  /* maintain square area for the container to avoid layout shift */
   aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
+  /* NEW: Smooth scaling transitions */
+  transition: transform 0.2s ease;
 }
 
-/* Lichess iframe should scale exactly like a board inside the shell */
+.board-shell:hover {
+  transform: scale(1.01); /* Subtle hover effect */
+}
+
 .lichess-iframe {
   width: 100%;
   height: 100%;
   border: 4px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  box-shadow: var(--shadow-md);
   background: var(--border);
 }
 
 .boards {
   display: grid;
   grid-template-columns: auto auto clamp(240px, 22vw, 360px);
-  gap: 48px;
+  gap: clamp(24px, 3vw, 48px); /* Responsive gap */
   align-items: start;
 }
 
 .board {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1; /* default; overridden dynamically */
+  aspect-ratio: 1 / 1;
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), 1fr);
   grid-template-rows: repeat(var(--rows, 3), 1fr);
   border: 4px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  box-shadow: var(--shadow-md);
   background: var(--border);
+  /* NEW: Smooth transitions for interactions */
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .board-8 {
@@ -106,26 +124,30 @@ body {
   width: clamp(360px, 44vw, 720px);
 }
 
+.board:hover {
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45); /* Enhanced hover effect */
+}
+
 .board-label {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: clamp(14px, 1.6vw, 20px);
   font-weight: 700;
   letter-spacing: 0.3px;
+  text-align: center; /* NEW: Better alignment */
 }
 
-.meta {
-  width: 50%;
-}
-
-.meta-card {
+/* IMPROVED: More consistent card styling */
+.meta-card, .feedback-card {
   width: 100%;
-  border: 1px solid #334155;
-  background: #0b1220;
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
   color: var(--text);
   border-radius: 10px;
   padding: calc(clamp(8px, 1vw, 14px) * var(--meta-scale)) calc(clamp(10px, 1.2vw, 16px) * var(--meta-scale));
   display: grid;
   gap: calc(8px * var(--meta-scale));
+  /* NEW: Consistent shadow */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .meta-row {
@@ -133,27 +155,35 @@ body {
   grid-template-columns: 1fr auto;
   gap: calc(12px * var(--meta-scale));
   align-items: center;
+  /* NEW: Better min-height for consistent spacing */
+  min-height: calc(24px * var(--meta-scale));
 }
 
 .meta-label {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: calc(clamp(11px, 1.1vw, 13px) * var(--meta-scale));
+  font-weight: 500; /* NEW: Slightly bolder for better hierarchy */
 }
 
 .meta-value {
   font-weight: 600;
   font-size: calc(clamp(12px, 1.2vw, 16px) * var(--meta-scale));
   text-align: right;
+  /* NEW: Text overflow handling */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
- 
+
 .meta-small {
   font-size: calc(clamp(8px, 0.8vw, 10px) * var(--meta-scale));
 }
 
-/* Style URL link in metadata to match theme */
+/* IMPROVED: Better link styling */
 .meta-card a {
-  color: #93c5fd; /* light blue */
+  color: #93c5fd;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .meta-card a:visited {
@@ -161,39 +191,43 @@ body {
 }
 
 .meta-card a:hover {
-  color: #bfdbfe; /* lighter on hover */
-  text-decoration: none;
+  color: #bfdbfe;
+  text-decoration: underline; /* NEW: Underline on hover for clarity */
 }
 
-.next-btn {
-  margin-top: 12px * var(--meta-scale);
-  width: 100%;
+/* IMPROVED: Consolidated button styles */
+.btn {
   padding: calc(clamp(8px, 1vw, 12px) * var(--meta-scale)) calc(clamp(10px, 1.2vw, 14px) * var(--meta-scale));
-  font-size: calc(clamp(10px, 1.6vw, 14px) * var(--meta-scale));
   border-radius: 8px;
-  border: 1px solid #334155;
+  border: 1px solid var(--surface-border);
   font-weight: 700;
   letter-spacing: 0.2px;
   cursor: pointer;
-  transition: transform 80ms ease, box-shadow 120ms ease, border-color 120ms ease;
+  transition: all 0.2s ease;
+  font-size: calc(clamp(10px, 1.6vw, 14px) * var(--meta-scale));
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* NEW: For potential icons */
+}
+
+.next-btn {
+  margin-top: calc(12px * var(--meta-scale));
+  width: 100%;
+}
+
+.next-btn:hover {
+  transform: translateY(-2px); /* Enhanced hover effect */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 .feedback-card {
-  width: 100%;
-  border: 1px solid #334155;
-  background: #0b1220;
-  color: var(--text);
-  border-radius: 10px;
-  padding: 12px 14px;
-  display: grid;
-  gap: 10px;
   margin-top: 12px;
-  /* Prevent children (like the Next button) from stretching vertically */
   align-items: start;
   align-content: start;
   grid-template-rows: auto auto;
 }
-
 
 .status-title {
   font-weight: 800;
@@ -201,15 +235,14 @@ body {
   color: var(--text);
   font-size: calc(clamp(16px, 2.2vw, 24px) * var(--meta-scale));
   text-align: center;
+  margin: 0; /* NEW: Remove default margins */
 }
-
 
 .small-title {
   font-size: calc(clamp(14px, 2.0vw, 20px) * var(--meta-scale));
 }
 
-/* Keep title neutral (no red/green overrides) */
-
+/* IMPROVED: Better run summary styling */
 .run-summary {
   display: flex;
   flex-direction: column;
@@ -236,15 +269,20 @@ body {
   justify-content: center;
   font-weight: bold;
   font-size: calc(clamp(12px, 1.8vw, 18px) * var(--meta-scale));
+  transition: transform 0.1s ease; /* NEW: Interactive feel */
+}
+
+.run-summary-box:hover {
+  transform: scale(1.1); /* NEW: Hover feedback */
 }
 
 .run-summary-box.correct {
-  background: #34d399; /* emerald-400 */
+  background: var(--success);
   color: white;
 }
 
 .run-summary-box.incorrect {
-  background: #f87171; /* red-400 */
+  background: var(--danger);
   color: white;
 }
 
@@ -253,13 +291,15 @@ body {
   color: var(--text);
   font-weight: 500;
 }
+
 .run-summary-note {
   text-align: center;
   font-size: calc(clamp(12px, 1.6vw, 14px) * var(--meta-scale));
   margin-bottom: 8px;
+  color: var(--text-muted); /* NEW: Better color hierarchy */
 }
 
-/* Summary comparison table (Yours vs Average) */
+/* IMPROVED: Better table styling */
 .run-summary-time table {
   border-collapse: separate;
   border-spacing: 0;
@@ -267,12 +307,16 @@ body {
   max-width: 100%;
   table-layout: fixed;
 }
+
 .run-summary-time caption {
   caption-side: top;
   text-align: center;
   margin-bottom: 15px;
   font-size: calc(clamp(11px, 1.4vw, 14px) * var(--meta-scale));
+  color: var(--text-muted);
+  font-weight: 600;
 }
+
 .run-summary-time th,
 .run-summary-time td {
   text-align: center;
@@ -280,30 +324,26 @@ body {
   font-size: calc(clamp(11px, 1.4vw, 14px) * var(--meta-scale));
   overflow-wrap: anywhere;
 }
-/* Inner grid lines only (no outer border) */
-.run-summary-time th + th,
-.run-summary-time td + td {
-  border-left: 1px solid #334155;
-}
-/* Ensure vertical border also between a header cell and the next data cell */
+
 .run-summary-time tr > * + * {
-  border-left: 1px solid #334155;
+  border-left: 1px solid var(--surface-border);
 }
+
 .run-summary-time tr + tr th,
 .run-summary-time tr + tr td {
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--surface-border);
 }
-/* Border between thead and first tbody row */
+
 .run-summary-time thead + tbody tr th,
 .run-summary-time thead + tbody tr td {
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--surface-border);
 }
 
 .copy-link-btn {
-  margin-top: 8px * var(--meta-scale);
+  margin-top: calc(8px * var(--meta-scale));
   padding: calc(clamp(8px, 1.2vw, 12px) * var(--meta-scale)) calc(clamp(14px, 2vw, 20px) * var(--meta-scale));
   border: 1px solid #475569;
-  background: #1e293b;
+  background: var(--surface-hover);
   color: var(--text);
   border-radius: 6px;
   font-weight: 600;
@@ -323,36 +363,34 @@ body {
 }
 
 .copy-link-btn.copied {
-  background: #34d399;
-  color: #0b1220;
+  background: var(--success);
+  color: var(--surface);
   border-color: rgba(52, 211, 153, 0.35);
 }
 
+/* IMPROVED: Consolidated button state styles */
 .next-btn.success {
-  background: #34d399; /* emerald-400 */
-  color: #0b1220;
+  background: var(--success);
+  color: var(--surface);
   box-shadow: 0 6px 16px rgba(52, 211, 153, 0.25);
   border-color: rgba(52, 211, 153, 0.35);
 }
 
 .next-btn.error {
-  background: #f87171; /* red-400 */
-  color: #0b1220;
+  background: var(--danger);
+  color: var(--surface);
   box-shadow: 0 6px 16px rgba(248, 113, 113, 0.25);
   border-color: rgba(248, 113, 113, 0.35);
 }
 
 .next-btn.new-run {
-  background: #60a5fa; /* blue-400 */
-  color: #0b1220;
+  background: #60a5fa;
+  color: var(--surface);
   box-shadow: 0 6px 16px rgba(96, 165, 250, 0.25);
   border-color: rgba(96, 165, 250, 0.35);
 }
 
-.next-btn:hover {
-  transform: translateY(-1px);
-}
-
+/* IMPROVED: Better square interactions */
 .square {
   position: relative;
   width: 100%;
@@ -360,6 +398,7 @@ body {
   display: grid;
   place-items: center;
   user-select: none;
+  transition: background-color 0.2s ease; /* NEW: Smooth background transitions */
 }
 
 .square.light { background: var(--light); }
@@ -374,17 +413,23 @@ body {
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));
+  transition: transform 0.1s ease; /* NEW: Subtle interaction */
+}
+
+.square:hover img {
+  transform: scale(1.05); /* NEW: Hover feedback for pieces */
 }
 
 .controls {
   display: grid;
-  gap: 8px;
+  gap: 12px; /* Increased for better spacing */
 }
 
 .hint {
   margin: 0;
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--text-muted);
+  line-height: 1.4; /* NEW: Better readability */
 }
 
 .row {
@@ -394,45 +439,62 @@ body {
   align-items: center;
 }
 
+/* IMPROVED: Better form styling */
 input[type="text"] {
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #334155;
-  background: #0b1220;
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
   color: var(--text);
   outline: none;
   font-size: 14px;
-  transition: border-color 120ms ease;
+  transition: all 0.2s ease;
+  font-family: inherit; /* NEW: Consistent font family */
 }
 
 input[type="text"]:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+  transform: translateY(-1px); /* NEW: Lift effect on focus */
 }
 
+input[type="text"]::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* IMPROVED: Consolidated button base styles */
 button {
   padding: 10px 14px;
   border-radius: 8px;
-  border: 1px solid #334155;
-  background: #111827;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-hover);
   color: var(--text);
   cursor: pointer;
   font-weight: 600;
+  font-family: inherit; /* NEW: Consistent font */
+  transition: all 0.2s ease;
 }
 
 button:hover {
   border-color: var(--accent);
   color: #fff;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 .error {
   min-height: 1.2em;
   color: var(--danger);
   font-size: 13px;
+  font-weight: 500; /* NEW: Better visibility */
 }
 
-/* Bottom menu */
+/* IMPROVED: Better bottom menu */
 .bottom-menu {
   position: fixed;
   bottom: 12px;
@@ -441,36 +503,42 @@ button:hover {
   display: flex;
   gap: 16px;
   justify-content: center;
-  color: #9ca3af;
+  color: var(--text-muted);
   z-index: 20;
+  padding: 0 16px; /* NEW: Prevent edge touching */
 }
+
 .menu-btn {
   background: transparent;
-  color: #9ca3af;
-  border: 1px solid #334155;
+  color: var(--text-muted);
+  border: 1px solid var(--surface-border);
   padding: 8px 12px;
   border-radius: 999px;
   cursor: pointer;
   text-decoration: none;
-}
-.menu-btn:hover {
-  border-color: #475569;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
-/* Active state for toggle-style bottom buttons */
+.menu-btn:hover {
+  border-color: #475569;
+  transform: translateY(-1px);
+}
+
 .menu-btn[aria-pressed="true"] {
-  background: #1f2937; /* slate-800 */
-  color: #e5e7eb;      /* zinc-200 */
-  border-color: #475569; /* slate-600 */
+  background: var(--surface-hover);
+  color: #e5e7eb;
+  border-color: #475569;
 }
 
 .meta-title {
   font-size: calc(clamp(12px, 2.0vw, 20px) * var(--meta-scale));
   font-weight: bold;
   text-align: center;
+  margin: 0 0 8px 0; /* NEW: Consistent spacing */
 }
 
-/* Modal */
+/* IMPROVED: Better modal styling */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -478,77 +546,134 @@ button:hover {
   display: grid;
   place-items: center;
   z-index: 30;
+  padding: 16px; /* NEW: Prevent edge touching on mobile */
+  backdrop-filter: blur(4px); /* NEW: Modern glass effect */
 }
+
 .modal-card {
   width: min(92vw, 720px);
-  border: 1px solid #334155;
-  background: #0b1220;
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
   color: var(--text);
   border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow-lg);
   display: grid;
   grid-template-rows: auto 1fr auto;
+  max-height: 90vh; /* NEW: Prevent overflow */
+  overflow: hidden; /* NEW: Contain content */
 }
+
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid #1f2937;
+  padding: 16px 20px; /* Increased padding */
+  border-bottom: 1px solid var(--surface-border);
 }
+
 .modal-title {
   margin: 0;
   font-size: 18px;
+  font-weight: 700;
 }
+
 .modal-close {
   background: transparent;
-  color: #9ca3af;
-  border: 1px solid #334155;
+  color: var(--text-muted);
+  border: 1px solid var(--surface-border);
   padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
+
+.modal-close:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
 .modal-body {
-  padding: 16px;
+  padding: 20px;
   display: grid;
   gap: 16px;
+  overflow-y: auto; /* NEW: Scrollable content */
 }
+
 .modal-footer {
-  padding: 12px 16px;
-  border-top: 1px solid #1f2937;
+  padding: 16px 20px;
+  border-top: 1px solid var(--surface-border);
   display: flex;
   justify-content: flex-end;
+  gap: 12px; /* NEW: Better button spacing */
 }
+
 .form-row {
   display: grid;
   gap: 8px;
 }
+
 .form-label {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: 13px;
+  font-weight: 500;
 }
+
 .form-hint {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: 12px;
+  line-height: 1.4;
 }
+
 .dual-range {
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
+
 input[type=range] {
   width: 100%;
 }
+
 .primary-btn {
-  background: #34d399;
-  color: #0b1220;
+  background: var(--success);
+  color: var(--surface);
   border: 1px solid rgba(52, 211, 153, 0.35);
   padding: 10px 14px;
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* Responsive layouts */
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(52, 211, 153, 0.25);
+}
+
+/* NEW: Loading state */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* IMPROVED: Responsive layouts with better breakpoints */
 @media (orientation: landscape) {
   .boards {
     grid-template-columns: auto auto clamp(260px, 22vw, 420px);
@@ -557,15 +682,16 @@ input[type=range] {
     justify-content: left;
     justify-items: left;
   }
+  
   .board,
   .board-8 {
-    /* Fit within viewport height alongside title/meta */
     max-width: min(36vw, calc(100vh - 240px), 720px);
   }
+  
   .board-shell {
-    /* Keep shell constrained just like boards to avoid jumps */
     max-width: min(36vw, calc(100vh - 240px), 720px);
   }
+  
   .meta {
     margin-top: 10%;
   }
@@ -579,42 +705,79 @@ input[type=range] {
     justify-content: center;
     justify-items: center;
   }
+  
   .board,
   .board-8 {
     max-width: min(92vw, calc(47vh - 140px), 560px);
   }
+  
   .board-shell {
     max-width: min(92vw, calc(47vh - 140px), 560px);
   }
+  
   .meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 5vw;
     margin-top: 0;
-    width: auto; 
+    width: auto;
     max-width: 100%;
-    /*margin-left: -5vw;*/
     justify-content: center;
-    align-items: start; /* prevent children from equal-height stretching */
+    align-items: start;
   }
+  
   .meta > .meta-card,
   .meta > .feedback-card {
     margin-top: 0;
-    align-self: start; /* allow independent heights */
+    align-self: start;
   }
-  /* Hide only the table in portrait for better fit; keep the message visible */
+  
   .run-summary-time th,
   .run-summary-time td {
     font-size: calc(clamp(7px, 1.1vw, 11px) * var(--meta-scale));
     padding: calc(1.5px * var(--meta-scale)) calc(2.5px * var(--meta-scale));
   }
 
-  /* Bottom menu tweaks for small screens */
-  .bottom-menu { gap: 8px; }
+  .bottom-menu { 
+    gap: 8px; 
+    flex-wrap: wrap; /* NEW: Wrap on very small screens */
+  }
+  
   .menu-btn {
     padding: 6px 10px;
     font-size: 12px;
   }
+  
+  /* NEW: Extra small screen adjustments */
+  @media (max-height: 600px) {
+    .page-title {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    
+    .container {
+      padding: 12px;
+    }
+  }
 }
 
+/* NEW: Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
+/* NEW: High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: #000;
+    --surface-border: #000;
+    --text-muted: #000;
+  }
+  
+  .square.light { background: #fff; }
+  .square.dark { background: #666; }
+}
